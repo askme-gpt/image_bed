@@ -1,0 +1,42 @@
+"PLAN FRAGMENT 0"
+"  OUTPUT EXPRS:<slot 5> sum(`totalvisit`) | <slot 4> `fivetime`"
+"  PARTITION: UNPARTITIONED"
+
+"  RESULT SINK"
+
+"  4:EXCHANGE"
+
+"PLAN FRAGMENT 1"
+
+"  PARTITION: HASH_PARTITIONED: <slot 4> `fivetime`"
+
+"  STREAM DATA SINK"
+"    EXCHANGE ID: 04"
+"    UNPARTITIONED"
+
+"  3:AGGREGATE (merge finalize)"
+"  |  output: sum(<slot 5> sum(`totalvisit`))"
+"  |  group by: <slot 4> `fivetime`"
+"  |  cardinality=-1"
+"  |  "
+"  2:EXCHANGE"
+
+"PLAN FRAGMENT 2"
+
+"  PARTITION: RANDOM"
+
+"  STREAM DATA SINK"
+"    EXCHANGE ID: 02"
+"    HASH_PARTITIONED: <slot 4> `fivetime`"
+
+"  1:AGGREGATE (update serialize)"
+"  |  STREAMING"
+"  |  output: sum(`totalvisit`)"
+"  |  group by: `fivetime`"
+"  |  cardinality=-1"
+"  |  "
+"  0:OlapScanNode"
+"     TABLE: access_log(access_log), PREAGGREGATION: ON"
+"     PREDICATES: `date` >= '2024-02-28 00:00:00', `date` <= '2024-02-28 00:00:00', `wild_host` IN ('ouyangfeng.amagong.com', 'yideng.yiyangzhi.com', 'wangchongyang.xiantiangong.com')"
+"     partitions=1/22, tablets=64/64, tabletList=8909500,8909504,8909508 ..."
+"     cardinality=457270734, avgRowSize=762.7133, numNodes=6"
